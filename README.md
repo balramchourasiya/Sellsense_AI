@@ -441,7 +441,7 @@ This repository uses Vercel Services with the repository root as the Vercel proj
 
 - Leave `VITE_API_URL` unset for this single-domain deployment. The frontend will use the same-origin `/api` route. If configured explicitly, use `/api`—do not leave a placeholder such as `your_deployed_backend_url`.
 - Add `GEMINI_API_KEY`, `SARVAM_API_KEY`, and `MONGODB_URI` as server-side environment variables only when those integrations are used. Never expose provider credentials through `VITE_*` variables.
-- Use a hosted MongoDB connection for persistent production data; the local JSON fallback may not persist between serverless invocations.
+- Set a hosted MongoDB connection for persistent production data. Without it, the Vercel JSON fallback uses `/tmp` only to support a demo; its contents are ephemeral and can disappear or differ across serverless instances.
 - Set the Vercel project Root Directory to the repository root so Vercel can read the multi-service `vercel.json`.
 
 ## 🔒 Security and Data Handling

@@ -6,7 +6,9 @@ import mongoose from 'mongoose';
 import Sale from '../models/Sale.js';
 import Product from '../models/Product.js';
 const here=path.dirname(fileURLToPath(import.meta.url));
-const file=path.resolve(here,'../../data/store-data.json');
+const file=process.env.VERCEL==='1'
+ ?path.join('/tmp','sellsense-ai','store-data.json')
+ :path.resolve(here,'../../data/store-data.json');
 let memory=null;
 const initial={sales:[
  {id:'s1',productName:'Masala Chips',quantity:2,unitPrice:20,total:40,paymentMethod:'UPI',paymentStatus:'SUCCESS',createdAt:new Date().toISOString()},
