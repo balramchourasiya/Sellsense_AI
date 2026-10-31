@@ -1,0 +1,26 @@
+import {Router} from 'express';
+import {randomUUID} from 'node:crypto';
+import {store} from '../services/store.js';
+import {buildInsights} from '../services/insights.js';
+import {answerQuestion} from '../services/assistant.js';
+const router=Router();
+router.get('/health',(_,res)=>res.json({ok:true,service:'SellSense AI API',mode:'local',payments:'manual_status_recording'}));
+router.get('/dashboard',async(_,res)=>{const d=await store.all();res.json({insights:buildInsights(d.sales,d.products),sales:d.sales,products:d.products,mode:'local',assistantProvider:process.env.GEMINI_API_KEY?'Gemini AI':'Store analytics'});});
+router.get('/sales',async(_,res)=>res.json(await store.sales()));
+router.post('/sales',async(req,res)=>{const {productName,quantity,unitPrice,paymentMethod='UPI',paymentStatus='SUCCESS'}=req.body||{};if(!productName||!Number.isFinite(Number(quantity))||Number(quantity)<1||!Number.isFinite(Number(unitPrice))||Number(unitPrice)<0)return res.status(400).json({error:'Provide productName, quantity >= 1, and unitPrice >= 0.'});const sale={id:randomUUID(),productName:String(productName).trim(),quantity:Number(quantity),unitPrice:Number(unitPrice),total:Number(quantity)*Number(unitPrice),paymentMethod:['UPI','Cash','Card'].includes(paymentMethod)?paymentMethod:'UPI',paymentStatus:['PENDING','SUCCESS','FAILED'].includes(paymentStatus)?paymentStatus:'SUCCESS',createdAt:new Date().toISOString()};res.status(201).json(await store.addSale(sale));});
+router.post('/sales/checkout',async(req,res)=>{
+ const items=req.body?.items;const paymentMethod=req.body?.paymentMethod||'UPI';const paymentStatus=req.body?.paymentStatus||'SUCCESS';
+ if(!Array.isArray(items)||!items.length)return res.status(400).json({error:'Add at least one product to the cart.'});
+ if(!['UPI','Cash','Card'].includes(paymentMethod))return res.status(400).json({error:'Choose UPI, Cash or Card.'});
+ if(!['PENDING','SUCCESS','FAILED'].includes(paymentStatus))return res.status(400).json({error:'Invalid payment status.'});
+ const clean=[];for(const item of items){const quantity=Number(item.quantity);if(!item.productId||!Number.isInteger(quantity)||quantity<1)return res.status(400).json({error:'Each cart item needs a productId and a whole quantity of at least 1.'});clean.push({productId:String(item.productId),quantity});}
+ const order=await store.checkout(clean,paymentMethod,paymentStatus);if(order.error)return res.status(400).json({error:order.error});res.status(201).json(order);
+});
+router.patch('/sales/:id/status',async(req,res)=>{if(!['PENDING','SUCCESS','FAILED'].includes(req.body?.status))return res.status(400).json({error:'status must be PENDING, SUCCESS, or FAILED'});const sale=await store.updateSale(req.params.id,req.body.status);if(!sale)return res.status(404).json({error:'Sale not found'});res.json(sale);});
+router.get('/products',async(_,res)=>res.json(await store.products()));
+router.post('/products',async(req,res)=>{const {name,barcode='',category='General',price,stock,lowStockAt=5}=req.body||{};if(!name||!Number.isFinite(Number(price))||Number(price)<0||!Number.isFinite(Number(stock))||Number(stock)<0)return res.status(400).json({error:'Provide name, non-negative price and stock.'});const all=await store.products();if(all.some(p=>p.name.toLowerCase()===String(name).trim().toLowerCase()))return res.status(409).json({error:'Product already exists.'});if(String(barcode||'').trim()&&all.some(p=>String(p.barcode||'').trim()===String(barcode).trim()))return res.status(409).json({error:'This barcode is already linked to another product.'});res.status(201).json(await store.addProduct({id:randomUUID(),name:String(name).trim(),barcode:String(barcode||'').trim(),category,price:Number(price),stock:Number(stock),lowStockAt:Number(lowStockAt)}));});
+router.patch('/products/:id',async(req,res)=>{const patch={};for(const k of ['name','barcode','category','price','stock','lowStockAt'])if(req.body?.[k]!==undefined)patch[k]=['price','stock','lowStockAt'].includes(k)?Number(req.body[k]):req.body[k];if(['price','stock','lowStockAt'].some(k=>patch[k]!==undefined&&(!Number.isFinite(patch[k])||patch[k]<0)))return res.status(400).json({error:'Numeric values must be non-negative.'});const all=await store.products();if(patch.barcode&&all.some(item=>item.id!==req.params.id&&String(item.barcode||'').trim()===String(patch.barcode).trim()))return res.status(409).json({error:'This barcode is already linked to another product.'});const p=await store.updateProduct(req.params.id,patch);if(!p)return res.status(404).json({error:'Product not found'});res.json(p);});
+router.delete('/products/:id',async(req,res)=>{const ok=await store.deleteProduct(req.params.id);res.status(ok?204:404).end();});
+router.post('/assistant',async(req,res)=>{const question=String(req.body?.question||'').trim();if(!question)return res.status(400).json({error:'question is required'});const d=await store.all();const history=Array.isArray(req.body?.history)?req.body.history.slice(-8).map(turn=>({role:turn?.role==='assistant'?'assistant':'user',text:String(turn?.text||'').slice(0,1200)})):[];res.json(await answerQuestion(question,d.sales,d.products,req.body?.language||'en',req.body?.previousQuestion||'',history));});
+router.post('/admin/reset',async(_,res)=>res.json({ok:true,data:await store.reset()}));
+export default router;
