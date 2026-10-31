@@ -1,124 +1,236 @@
-# SellSense AI — Merchant Growth Assistant
+::: {align="center"}
+# SellSense AI
 
-SellSense AI is a voice-first merchant assistant for the Paytm Build for India hackathon. It combines a Paytm-inspired merchant dashboard, camera barcode scanning, checkout, stock tracking, and store-data analysis.
+### Your shop's sales, stock, and next step --- one conversation away.
 
-## Main features
+**A voice-first retail assistant built to help small shopkeepers bill
+faster, track stock, and understand their business.**
 
-- Paytm-inspired white, navy, and cyan interface.
-- Mobile rear-camera live barcode scanning powered by ZXing Browser 0.1.5 and ZXing Library 0.21.3, phone camera photo scanning, plus USB barcode scanner and manual barcode entry.
-- A scanned product is matched against the inventory barcode and added to the current bill.
-- If a barcode is new, the shopkeeper can register the product and barcode once; the product is then added to the open bill.
-- Checkout records every product line under one order, calculates the bill total, deducts inventory, and refreshes sales analysis.
-- Sales analysis includes day/week/month revenue, order count, units sold, average order value, payment-method totals, top products, category performance, peak sales hour and weekday, products often bought together, stock cover, reorder suggestions, and slow-moving inventory.
-- Floating voice assistant stays available throughout the app, supports spoken questions and spoken replies, and can navigate to Scan & Sell or Inventory and add a known product to the bill by voice.
-- The assistant analyzes current store records, supports contextual follow-up questions, and suggests useful next questions. Add a Gemini API key to enable natural-language AI reasoning grounded in the store snapshot; without a key, the built-in analytics assistant remains available.
-- Store records are saved in a local JSON file by default. MongoDB can be enabled with an environment variable.
+**Paytm Build for India AI Hackathon · Independent project**
+:::The problem we're solving
+A shopkeeper's day is full of quick decisions: What should go into this
+bill? Which items are running low? What is selling? What should be
+restocked?
 
-## Requirements
+Large businesses use digital systems to answer these questions. Small
+retailers often manage them while serving customers. SellSense AI
+brings billing, inventory, sales records, and a conversational assistant
+into one workspace.
+Less time navigating screens. More clarity about the shop.
 
+What SellSense AI does
+- Scan or select products: barcode scanning, photo/manual code
+  entry where supported, and Quick Add.
+- Build bills with voice: supported commands can add known
+  products and quantities to the current bill.
+- Keep stock in sync: checkout records the sale and updates
+  inventory through the checkout workflow.
+- Ask questions naturally: query available inventory, recorded
+  sales, and pending transaction records.
+- Get practical signals: dashboard metrics and restocking guidance
+  use the data recorded in the app.
+- Choose how to interact: type questions or use supported browser
+  speech features, with English, Hindi, and Hinglish response options.
+- Choose a data setup: local JSON persistence by default, with
+  optional MongoDB configuration.
+- Use supported AI integrations: Gemini and Sarvam AI options are
+  available for supported workflows when correctly configured.
+See it in action
+1. Understand the shop
+The dashboard shows recorded sales, recent activity, and inventory items
+that may need attention.
+2. Create a bill
+Open Scan & Sell and scan a product, enter a code, use photo input
+where supported, or choose an item from Quick Add. Supported voice
+commands can also add known products.
+
+Example:
+"Add two milk packets and one bread to the bill."
+
+The app matches known inventory items and uses their saved prices. The
+shopkeeper reviews the bill before checkout.
+3. Complete checkout
+Checkout saves the sale record and updates stock. Payment status is a
+record selected by the merchant; it is not live confirmation from a
+bank or payment provider.
+4. Ask the assistant
+Try questions such as:
+- "Which products need restocking?"
+- "Show my pending payments."
+- "What are my recent sales?"
+Answers depend on the data stored in the app and the features configured
+for the current run.
+5. Make a more informed decision
+Stock and sales movement can help the shopkeeper plan the next order.
+Restocking suggestions are estimates based on available records, not
+guarantees about future demand.
+Technology stack
+  Layer                   Technologies            Role
+  Frontend                React 18, Vite 6,       Dashboard, billing,
+JavaScript, CSS         inventory,
+transactions, assistant
+
+  Backend                 Node.js, Express 4      API routes and
+application workflows
+
+  Data                    JSON persistence;       Product and sales
+optional MongoDB and    records
+Mongoose
+
+  Barcode                 ZXing Browser           Browser-based barcode
+scanning
+
+  Voice                   Browser MediaDevices    Camera access, speech
+and Web Speech APIs     recognition, spoken
+replies where supported
+
+  AI                      Gemini Interactions     Supported
+API; Sarvam AI backend  conversational and
+integration             speech-related
+workflows
+UI                      Lucide React            Interface icons
+Architecture
+Shopkeeper
+   │
+   ├── Dashboard · Scan & Sell · Inventory · Transactions
+   └── Voice / text assistant
+                │
+                ▼
+       React 18 + Vite 6
+                │  /api
+                ▼
+       Node.js + Express API
+         │          │          │
+         ▼          ▼          ▼
+      Products     Sales    Assistant & Insights
+         │          │          │
+         └──────────┴──────────┘
+                    │
+                    ▼
+       JSON persistence by default
+          or configured MongoDB
+                    │
+                    ▼
+       Optional Gemini / Sarvam AI
+The backend keeps provider credentials out of browser code. Supported
+local commands and local analytics can work without an AI provider key;
+external AI requests require valid configuration and network access.
+Run locally
+Prerequisites
 - Node.js 18.11 or newer
 - npm
 - A modern browser
-- For live camera access on a phone, use an HTTPS address. A plain HTTP LAN address may load the app but browsers can block camera access. `localhost` is also allowed for local development on the same device.
-
-## Setup
-
-From the main project folder (`SellSense_AI_Full_Project`), run:
-
-```bash
+Install and start
+Run these commands from the project root, SellSense_AI_Full_Project:
 npm install
 npm run install:all
 npm run dev
-```
+The documented development setup starts the API on port 5000 and the
+Vite frontend on port 5173. Open the frontend address printed by Vite
+and keep the terminal running.
 
-This starts both services together: the API on port 5000 and the website on port 5173. Keep this terminal window open. The website forwards `/api` requests to the API through Vite, so the phone does not need to connect directly to port 5000.
-
-To start the services separately, use two terminals:
-
-Terminal 1, from the main project folder:
-
-```bash
+You can also run each service separately:
 npm run dev --prefix server
-```
-
-Terminal 2, from the main project folder:
-
-```bash
 npm run dev --prefix client
-```
+These commands follow the documented project scripts. If your checkout
+has different folder names or scripts, check the root and
+package-level package.json files.
 
-Open the website address printed by Vite. On a phone connected to the same Wi-Fi, use the computer's LAN IP address with port 5173 (for example, `http://192.168.1.10:5173`), not `localhost`. Allow Node.js through the computer's firewall if the phone cannot open that address. The Vite API proxy forwards requests to port 5000 on the computer.
+Environment setup
+Copy the example environment file:
+cp server/.env.example server/.env
+On Windows Command Prompt:
+copy server\.env.example server\.env
+Configure only the services you plan to use:
 
-Copy `server/.env.example` to `server/.env`. Set `GEMINI_API_KEY` to a key from [Google AI Studio](https://aistudio.google.com/apikey) to enable Gemini-powered conversational analysis. The key stays on the backend and is never sent to the browser. The assistant sends a store metrics snapshot and recent conversation to Gemini using the Interactions API with `store: false`; without a key, local data-grounded analytics answers are used. Set `MONGODB_URI` to enable MongoDB; otherwise the app uses local JSON persistence. In production, set `CLIENT_ORIGIN` to your frontend origin(s), separated by commas.
+  Variable           Purpose
+  GEMINI_API_KEY   Optional Gemini conversational analysis
+SARVAM_API_KEY   Sarvam AI backend integration
+MONGODB_URI      Optional MongoDB connection
+CLIENT_ORIGIN    Allowed frontend origin or origins
+Security basics
+- Never commit .env files, API keys, database credentials, or real
+  store data.
+- Keep secret keys on the backend; never put them in frontend code.
+- Keep .env.example limited to variable names and safe placeholders.
+- Rotate a key immediately if it is accidentally exposed.
+Hackathon demo flow
+For a clear end-to-end presentation:
+1. Open the dashboard and explain the shop snapshot.
+2. Open Scan & Sell and add a product using barcode scan or Quick
+   Add.
+3. Use a supported voice command to add known products to the bill.
+4. Review the bill and complete checkout with a clearly explained demo
+   payment status.
+5. Open Transactions to show the recorded sale.
+6. Return to Inventory and show the stock update.
+7. Ask the assistant which products may need restocking.
+8. Close with the technology stack and the path to supporting more
+   shops.
+Demo checklist - Reset demo data and rehearse the exact commands and
+questions. - Keep a known barcode or Quick Add as a backup. - Mobile
+camera scanning may require HTTPS; use photo input or manual entry where
+supported. - Test AI features with valid credentials and internet
+access. - Demo data proves the workflow---not real merchant adoption or
+measured business impact.
+Current scope and limitations
+SellSense AI is a prototype demonstrating a practical retail workflow.
+These boundaries matter:
+- It is not fully offline. Supported local commands and analytics
+  may work without an AI key, but external AI calls need connectivity.
+- Browser speech features vary by browser and device and may rely on
+  online services.
+- Payment status is entered in the app; live payment-provider
+  verification is not claimed.
+- Insights depend on accurate and complete sales and stock records.
+- Restocking guidance is an estimate, not a guaranteed demand
+  forecast.
+- Production use across multiple real stores would require further
+  review of data separation, access control, reliability, and
+  deployment.
+- Profit calculation is not claimed because complete purchase-cost and
+  expense records are not maintained.
+Roadmap
+Potential next steps as the project matures:
+- Multi-store separation, user accounts, and role-based access
+- Production database setup, backups, migrations, and recovery
+- Verified payment-provider integrations and payment reconciliation
+- More reliable multilingual speech support across devices
+- More detailed sales trends and configurable stock alerts
+- Automated tests, CI checks, monitoring, and deployment hardening
+- Usability testing with real shopkeepers and changes based on their
+  feedback
+This roadmap describes possible future work, not features promised by
+the current prototype.
+Why it matters
+Small retailers make important decisions every day, often while doing
+several jobs at once. Technology should meet them where they are---not
+make them learn a complicated system before it becomes useful.
 
-## Mobile barcode scanning
+SellSense AI explores a simple idea: let shopkeepers work in familiar
+ways, keep store records connected, and make those records easier to
+understand through conversation.
 
-1. Run the app on a host that has HTTPS enabled, or use `localhost` while testing on the same device.
-2. Open **Scan & Sell** on the phone.
-3. Tap **Start live camera** and allow camera permission. The rear camera is requested where available.
-4. Keep the complete barcode inside the blue scan frame. A matched item is added to the bill.
-5. When live camera access is blocked, tap **Take barcode photo**. The phone camera opens and SellSense reads the barcode from the photo. To scan the same physical barcode again, move it out of view briefly and present it again.
-6. When a barcode is not registered, choose **Add this barcode to inventory**, enter the product name, category, selling price, and available stock. The new item is added to the current bill.
-7. Complete the sale. The bill lines are stored under one order, inventory is reduced, and revenue/product analysis refreshes.
+Start with one shop. Build for many.
+Contributing
+Contributions, issue reports, and practical feedback are welcome.
+1. Fork the repository.
+2. Create a feature branch.
+3. Make a focused change.
+4. Test the affected workflow.
+5. Open a pull request with a clear description and test notes.
+Do not include secrets, personal data, or real merchant records in
+issues, screenshots, or pull requests.
+License
+No license is specified here. Add a LICENSE file before presenting the
+repository as open source, and choose a license that matches your team's
+intent.
+Acknowledgment
+Built for the Paytm Build for India AI Hackathon as an independent
+project. SellSense AI is not an official Paytm product and does not
+claim endorsement by Paytm.
+::: {align="center"}
+### SellSense AI
 
-The starter catalog contains synthetic EAN-13 test codes with valid check digits (they are for scanner testing, not registered retail GTINs): Masala Chips `8901000000019`, Milk 1L `8901000000026`, Basmati Rice 1kg `8901000000033`, Soap `8901000000040`, and Tea 250g `8901000000057`. Use matching printed labels when testing; a scanner returns the barcode physically printed on the product, not the sample code shown in the app.
-
-If live camera permission is blocked, check the browser's site settings. Continuous camera access is restricted on ordinary HTTP pages that are not localhost; use an HTTPS deployment or secure tunnel for live scanning on a phone. The photo-capture option may still be available through the phone's file input. USB barcode scanners that type into a keyboard field and manual entry are also supported. The development frontend uses a same-origin `/api` route proxied by Vite to the local API server. For a separate production deployment, set `VITE_API_URL` to the full API base URL, including `/api`.
-
-## Voice assistant
-
-Use the floating SellSense panel on any page. Select English, Hindi, or Hinglish and tap the microphone to start continuous voice conversation. Browser speech recognition support and microphone permission are required.
-
-Example questions:
-
-- How much did I sell today?
-- Compare today with yesterday.
-- Which product earned the most?
-- How is Milk 1L performing?
-- What should I restock?
-- Which products are slow moving?
-- What is my average bill value?
-- Which hour is busiest?
-- Which day of the week is strongest?
-- Which products are often bought together?
-- Why are sales down?
-- Compare this week with last week.
-- What can I expect tomorrow?
-- How much is my current inventory worth?
-- Show my UPI, cash, and card collections.
-
-Voice actions include **open Scan & Sell**, **open Inventory**, **add 2 Milk 1L to bill**, and **clear bill**. The product must already exist in Inventory for voice adding to work.
-
-## Payment integration note
-
-The checkout records the payment method and the payment status selected by the shopkeeper. A status entered in SellSense is a store record, not independent bank confirmation. Live Paytm payment initiation and verification require authorized merchant API credentials and an approved integration; no credentials are included in this source package.
-
-## Important calculations
-
-- Sales revenue includes records marked paid and excludes pending or failed records.
-- Average order value is paid revenue divided by the number of unique orders.
-- Product movement uses paid sale lines from the most recent 30 calendar days.
-- Stock cover is estimated from average daily units sold over those 30 days.
-- Suggested reorder quantity targets about seven days of stock cover; review supplier lead time, expiry, and local demand before ordering.
-- Profit is not calculated because purchase cost and operating expenses are not included by default. Repeat-customer patterns are not calculated because customer identifiers are not collected.
-
-## Sarvam AI voice assistant setup
-
-The backend now includes a Sarvam chat endpoint and a first-call test script. The API key stays on the server and must never be placed in the React client.
-
-1. Copy `server/.env.example` to `server/.env`.
-2. Set `SARVAM_API_KEY` to your key from the Sarvam dashboard. Keep the key private.
-3. From the project root, run `npm run install:all`.
-4. Test the first API call with `npm run sarvam:test --prefix server`.
-5. Start the app with `npm run dev`.
-6. Check configuration at `GET /api/sarvam/status` and send a question to `POST /api/sarvam/chat` with JSON `{ "question": "Give me one tip to manage shop stock." }`.
-
-The chat endpoint is the first integration step. Audio capture/transcription and generated speech still need to be wired into the existing React voice controls before the entire voice pipeline is complete. The authenticated live call cannot be tested until you add your own API key and have available Sarvam credits.
-
-## Offline-first voice commands
-
-The assistant now includes deterministic local handlers for common store queries and cart actions, so these do not require a Sarvam/Gemini/other AI API key. Examples include adding tea and biscuit packets, making a bill, checking today's recorded sales, listing products and prices, checking tea stock, viewing low-stock products, viewing pending transactions, finding the top-selling product, and calculating last-7-day revenue. The assistant also provides a list of ready-to-use commands in the UI.
-
-Voice input uses the browser's Web Speech Recognition implementation and the selected language locale (English, Hindi/Hinglish, Kannada, Tamil, Telugu, Bengali, Marathi, Gujarati, Punjabi). This browser feature is not available in every browser/device, and recognition quality/language availability depends on the browser and device. The local command parser has English and common Hindi/Hinglish aliases; it does not guarantee understanding of every language or every phrasing. Unrecognized analytics questions may still use the configured backend AI endpoint. Microphone access requires a supported browser and a secure context (HTTPS or localhost).
-
-Starter inventory now includes Tea 250g, Tea Cup, Biscuit Packet, and 10 other common products. Use Reset store data if an existing local JSON database does not show the new starter products; reset will erase existing local sales and inventory changes.
+**A simpler way to run the shop---and understand what comes next.**
+:::
