@@ -1,7 +1,8 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {BrowserMultiFormatReader} from '@zxing/browser';
 import {Activity,ArrowDownRight,ArrowUpRight,BarChart3,Check,ChevronRight,Clock,Coins,LayoutDashboard,Mic,MicOff,Package,Plus,RefreshCw,Send,ShieldAlert,ShoppingBag,Volume2,Wallet,X,MessageCircle,Minimize2,Maximize2,ScanLine,Camera,CameraOff,Search,ShoppingCart,Trash2,Minus,Barcode,ReceiptText} from 'lucide-react';
-const API=import.meta.env.VITE_API_URL||'/api';
+const configuredApiUrl=String(import.meta.env.VITE_API_URL||'').trim().replace(/\/+$/,'');
+const API=configuredApiUrl&&!/your_deployed_backend_url|placeholder/i.test(configuredApiUrl)?configuredApiUrl:'/api';
 const money=n=>new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n||0);
 async function request(path,options={}){const r=await fetch(`${API}${path}`,{headers:{'Content-Type':'application/json'},...options});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Request failed');}return r.status===204?null:r.json();}
 const speechLocale={en:'en-IN',hi:'hi-IN',hinglish:'hi-IN',kn:'kn-IN',ta:'ta-IN',te:'te-IN',bn:'bn-IN',mr:'mr-IN',gu:'gu-IN',pa:'pa-IN'};

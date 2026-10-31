@@ -435,6 +435,15 @@ Use this sequence to demonstrate the main application features.
 
 ---
 
+## Deploying to Vercel
+
+This repository uses Vercel Services with the repository root as the Vercel project root. The `client` service serves the frontend, while the `server` service handles requests under `/api/`.
+
+- Leave `VITE_API_URL` unset for this single-domain deployment. The frontend will use the same-origin `/api` route. If configured explicitly, use `/api`—do not leave a placeholder such as `your_deployed_backend_url`.
+- Add `GEMINI_API_KEY`, `SARVAM_API_KEY`, and `MONGODB_URI` as server-side environment variables only when those integrations are used. Never expose provider credentials through `VITE_*` variables.
+- Use a hosted MongoDB connection for persistent production data; the local JSON fallback may not persist between serverless invocations.
+- Set the Vercel project Root Directory to the repository root so Vercel can read the multi-service `vercel.json`.
+
 ## 🔒 Security and Data Handling
 
 SellSense AI follows a client-server approach to application data and external provider credentials.
@@ -474,7 +483,7 @@ Potential improvements for future versions:
 - [ ] Improved transaction audit history
 - [ ] Role-based access for shop owners and staff
 - [ ] More extensive language and accessibility testing
-- [ ] Deployment documentation
+- [x] Deployment documentation
 - [ ] Production monitoring and error reporting
 
 These items are proposed enhancements, not claims about existing features.
