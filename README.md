@@ -1,236 +1,521 @@
-::: {align="center"}
-# SellSense AI
+<div align="center">
 
-### Your shop's sales, stock, and next step --- one conversation away.
+# ⚡ SellSense AI
 
-**A voice-first retail assistant built to help small shopkeepers bill
-faster, track stock, and understand their business.**
+### Your Shop. Your Data. Your AI Assistant.
 
-**Paytm Build for India AI Hackathon · Independent project**
-:::The problem we're solving
-A shopkeeper's day is full of quick decisions: What should go into this
-bill? Which items are running low? What is selling? What should be
-restocked?
+**An AI-powered shop management assistant built for smarter billing, inventory tracking, and sales insights.**
 
-Large businesses use digital systems to answer these questions. Small
-retailers often manage them while serving customers. SellSense AI
-brings billing, inventory, sales records, and a conversational assistant
-into one workspace.
-Less time navigating screens. More clarity about the shop.
+Built for the **Paytm Build for India AI Hackathon**
 
-What SellSense AI does
-- Scan or select products: barcode scanning, photo/manual code
-  entry where supported, and Quick Add.
-- Build bills with voice: supported commands can add known
-  products and quantities to the current bill.
-- Keep stock in sync: checkout records the sale and updates
-  inventory through the checkout workflow.
-- Ask questions naturally: query available inventory, recorded
-  sales, and pending transaction records.
-- Get practical signals: dashboard metrics and restocking guidance
-  use the data recorded in the app.
-- Choose how to interact: type questions or use supported browser
-  speech features, with English, Hindi, and Hinglish response options.
-- Choose a data setup: local JSON persistence by default, with
-  optional MongoDB configuration.
-- Use supported AI integrations: Gemini and Sarvam AI options are
-  available for supported workflows when correctly configured.
-See it in action
-1. Understand the shop
-The dashboard shows recorded sales, recent activity, and inventory items
-that may need attention.
-2. Create a bill
-Open Scan & Sell and scan a product, enter a code, use photo input
-where supported, or choose an item from Quick Add. Supported voice
-commands can also add known products.
+<br>
 
-Example:
-"Add two milk packets and one bread to the bill."
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-API-000000?style=for-the-badge&logo=express&logoColor=white)
+![AI](https://img.shields.io/badge/AI-Powered-8A2BE2?style=for-the-badge)
 
-The app matches known inventory items and uses their saved prices. The
-shopkeeper reviews the bill before checkout.
-3. Complete checkout
-Checkout saves the sale record and updates stock. Payment status is a
-record selected by the merchant; it is not live confirmation from a
-bank or payment provider.
-4. Ask the assistant
-Try questions such as:
-- "Which products need restocking?"
-- "Show my pending payments."
-- "What are my recent sales?"
-Answers depend on the data stored in the app and the features configured
-for the current run.
-5. Make a more informed decision
-Stock and sales movement can help the shopkeeper plan the next order.
-Restocking suggestions are estimates based on available records, not
-guarantees about future demand.
-Technology stack
-  Layer                   Technologies            Role
-  Frontend                React 18, Vite 6,       Dashboard, billing,
-JavaScript, CSS         inventory,
-transactions, assistant
+**BILL SMARTER · TRACK STOCK · ASK YOUR SHOP**
 
-  Backend                 Node.js, Express 4      API routes and
-application workflows
+</div>
 
-  Data                    JSON persistence;       Product and sales
-optional MongoDB and    records
-Mongoose
+---
 
-  Barcode                 ZXing Browser           Browser-based barcode
-scanning
+## 📌 Table of Contents
 
-  Voice                   Browser MediaDevices    Camera access, speech
-and Web Speech APIs     recognition, spoken
-replies where supported
+- [Overview](#-overview)
+- [Problem Statement](#-problem-statement)
+- [Our Solution](#-our-solution)
+- [Key Features](#-key-features)
+- [How It Works](#-how-it-works)
+- [System Architecture](#-system-architecture)
+- [Technology Stack](#-technology-stack)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Environment Configuration](#-environment-configuration)
+- [Demo Workflow](#-demo-workflow)
+- [Security and Data Handling](#-security-and-data-handling)
+- [Limitations](#-limitations)
+- [Future Improvements](#-future-improvements)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
-  AI                      Gemini Interactions     Supported
-API; Sarvam AI backend  conversational and
-integration             speech-related
-workflows
-UI                      Lucide React            Interface icons
-Architecture
-Shopkeeper
-   │
-   ├── Dashboard · Scan & Sell · Inventory · Transactions
-   └── Voice / text assistant
-                │
-                ▼
-       React 18 + Vite 6
-                │  /api
-                ▼
-       Node.js + Express API
-         │          │          │
-         ▼          ▼          ▼
-      Products     Sales    Assistant & Insights
-         │          │          │
-         └──────────┴──────────┘
-                    │
-                    ▼
-       JSON persistence by default
-          or configured MongoDB
-                    │
-                    ▼
-       Optional Gemini / Sarvam AI
-The backend keeps provider credentials out of browser code. Supported
-local commands and local analytics can work without an AI provider key;
-external AI requests require valid configuration and network access.
-Run locally
-Prerequisites
-- Node.js 18.11 or newer
+---
+
+## 🚀 Overview
+
+**SellSense AI** is a shop management assistant designed to help small retailers manage everyday store operations through a connected digital workspace.
+
+It brings billing, inventory management, transaction records, and conversational assistance into one application.
+
+Instead of navigating multiple screens for every task, shopkeepers can use the available interface, barcode scanning, and supported voice commands to interact with their store.
+
+### At a Glance
+
+| Attribute | Details |
+|---|---|
+| Project Name | SellSense AI |
+| Category | AI for Retail |
+| Target Users | Small retailers and neighborhood shops |
+| Frontend | React 18 + Vite 6 |
+| Backend | Node.js + Express 4 |
+| Data Storage | JSON persistence, with optional MongoDB |
+| AI Integrations | Gemini and Sarvam AI for supported workflows |
+| Project Type | Hackathon prototype |
+
+---
+
+## 🎯 Problem Statement
+
+Small retailers often manage several tasks at the same time:
+
+- Preparing customer bills
+- Maintaining product and stock records
+- Tracking sales and transactions
+- Identifying products that may need restocking
+- Understanding daily business activity
+
+Manual processes can make these tasks harder to manage efficiently.
+
+**The challenge:** How can we make everyday shop management simpler and more accessible without requiring shopkeepers to learn complicated software?
+
+---
+
+## 💡 Our Solution
+
+SellSense AI connects important shop operations through a simple interface and a conversational assistant.
+
+| Challenge | SellSense AI Approach |
+|---|---|
+| Slow product selection | Barcode scanning and Quick Add |
+| Repetitive billing tasks | Supported voice commands |
+| Difficulty tracking stock | Centralized inventory records |
+| Scattered sales information | Transaction history and dashboard |
+| Difficulty interpreting store data | Conversational questions and recorded-data insights |
+
+> **Our vision:** Make useful retail technology as easy to use as having a conversation.
+
+---
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🧾 Smart Billing
+
+- Barcode-assisted product selection
+- Quick Add for known products
+- Bill and quantity review
+- Checkout workflow
+
+</td>
+<td width="50%">
+
+### 📦 Inventory Management
+
+- Product and price records
+- Stock quantity tracking
+- Inventory updates through checkout
+- Stock-related insights
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎙️ Conversational Assistant
+
+- Text-based questions
+- Supported voice commands
+- Store-aware responses
+- Language selection
+
+</td>
+<td width="50%">
+
+### 📊 Sales Insights
+
+- Dashboard metrics
+- Recorded transaction history
+- Sales-related questions
+- Estimated restocking guidance
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🔄 How It Works
+
+The following diagram shows the main product workflow.
+
+```mermaid
+flowchart TD
+    A([Open SellSense AI]) --> B[View Dashboard]
+    B --> C[Open Scan and Sell]
+
+    C --> D{Select Products}
+
+    D --> E[Scan Barcode]
+    D --> F[Use Quick Add]
+    D --> G[Use Supported Voice Command]
+
+    E --> H[Review Bill]
+    F --> H
+    G --> H
+
+    H --> I[Confirm Checkout]
+    I --> J[Save Transaction]
+    J --> K[Update Inventory]
+
+    K --> L[View Transactions]
+    K --> M[Review Stock Insights]
+
+    L --> N[Ask AI Assistant]
+    M --> N
+
+    N --> O([Make Informed Decisions])
+```
+
+### Example Interaction
+
+**Shopkeeper:**
+
+> Add two milk packets and one bread to the bill.
+
+**SellSense AI:**
+
+1. Processes the supported command.
+2. Matches the requested products against available product records.
+3. Adds recognized products to the bill when the required conditions are met.
+4. Lets the shopkeeper review the bill before checkout.
+
+After checkout, the sale is recorded and inventory is updated through the application workflow.
+
+---
+
+## 🏗️ System Architecture
+
+SellSense AI follows a client-server architecture.
+
+```mermaid
+flowchart TB
+    USER[Shopkeeper]
+
+    subgraph FRONTEND[Frontend Layer]
+        REACT[React + Vite]
+        UI[Dashboard]
+        BILLING[Billing Interface]
+        INVENTORY[Inventory Interface]
+        CHAT[AI Assistant Interface]
+    end
+
+    subgraph BACKEND[Backend Layer]
+        API[Express REST API]
+        SALES[Sales and Billing Logic]
+        STOCK[Inventory Logic]
+        INSIGHTS[Insights and Assistant Logic]
+    end
+
+    subgraph STORAGE[Persistence Layer]
+        JSON[(JSON File Storage)]
+        MONGO[(Optional MongoDB)]
+    end
+
+    subgraph PROVIDERS[External AI Services]
+        GEMINI[Gemini]
+        SARVAM[Sarvam AI]
+    end
+
+    USER --> REACT
+
+    REACT --> UI
+    REACT --> BILLING
+    REACT --> INVENTORY
+    REACT --> CHAT
+
+    UI --> API
+    BILLING --> API
+    INVENTORY --> API
+    CHAT --> API
+
+    API --> SALES
+    API --> STOCK
+    API --> INSIGHTS
+
+    SALES --> JSON
+    STOCK --> JSON
+
+    JSON -. Optional database configuration .-> MONGO
+
+    INSIGHTS -. Supported integration .-> GEMINI
+    INSIGHTS -. Supported integration .-> SARVAM
+```
+
+### Request Flow
+
+1. The user performs an action in the frontend.
+2. The frontend sends the required request to the backend.
+3. The backend processes the request and accesses the relevant store records.
+4. The application returns the result to the frontend.
+5. Supported assistant workflows can use configured AI providers.
+6. The result is displayed and may be spoken using supported browser features.
+
+**Security principle:** API keys for external AI providers must remain on the server.
+
+---
+
+## 🛠️ Technology Stack
+
+| Technology | Layer | Purpose |
+|---|---|---|
+| React 18 | Frontend | Builds the user interface |
+| Vite 6 | Frontend tooling | Development server and build tooling |
+| JavaScript | Application | Implements application behavior |
+| Node.js | Backend runtime | Runs server-side code |
+| Express 4 | Backend framework | Handles API routes and requests |
+| JSON files | Persistence | Provides default local record storage |
+| MongoDB | Optional database | Supports configured database persistence |
+| Mongoose | Database integration | Supports MongoDB data modeling |
+| ZXing Browser | Barcode scanning | Decodes supported barcodes |
+| Web Speech API | Browser features | Supports speech recognition and text-to-speech where available |
+| Gemini | AI integration | Supports configured AI workflows |
+| Sarvam AI | AI integration | Supports configured backend workflows |
+| Lucide React | UI | Provides interface icons |
+
+---
+
+## 📂 Project Structure
+
+```text
+SellSense_AI_Full_Project/
+│
+├── client/
+│   ├── src/
+│   │   └── UI and client-side workflows
+│   └── package.json
+│
+├── server/
+│   ├── .env.example
+│   └── package.json
+│
+├── package.json
+└── README.md
+```
+
+> This is a high-level structure. The exact files and subfolders may differ in your repository. Keep this section aligned with your actual project files.
+
+---
+
+## ⚙️ Installation
+
+### Prerequisites
+
+Install the following before running the project:
+
+- Node.js
 - npm
-- A modern browser
-Install and start
-Run these commands from the project root, SellSense_AI_Full_Project:
+- Git
+- Optional: MongoDB
+- Optional: AI provider API keys
+
+### Step 1: Clone the Repository
+
+```bash
+git clone YOUR_REPOSITORY_URL
+```
+
+Replace `YOUR_REPOSITORY_URL` with your actual GitHub repository URL.
+
+### Step 2: Open the Project Directory
+
+```bash
+cd SellSense_AI_Full_Project
+```
+
+Use the actual directory name if yours is different.
+
+### Step 3: Install Dependencies
+
+```bash
 npm install
 npm run install:all
+```
+
+### Step 4: Configure Environment Variables
+
+Follow the steps in the next section.
+
+### Step 5: Start the Application
+
+```bash
 npm run dev
-The documented development setup starts the API on port 5000 and the
-Vite frontend on port 5173. Open the frontend address printed by Vite
-and keep the terminal running.
+```
 
-You can also run each service separately:
+The documented development setup uses:
+
+| Service | Default Port |
+|---|---:|
+| Frontend | `5173` |
+| Backend API | `5000` |
+
+Actual ports may vary with your configuration.
+
+### Run Frontend and Backend Separately
+
+**Terminal 1 — Backend**
+
+```bash
 npm run dev --prefix server
+```
+
+**Terminal 2 — Frontend**
+
+```bash
 npm run dev --prefix client
-These commands follow the documented project scripts. If your checkout
-has different folder names or scripts, check the root and
-package-level package.json files.
+```
 
-Environment setup
-Copy the example environment file:
-cp server/.env.example server/.env
-On Windows Command Prompt:
-copy server\.env.example server\.env
-Configure only the services you plan to use:
+Use the scripts available in your actual `package.json` files if they differ.
 
-  Variable           Purpose
-  GEMINI_API_KEY   Optional Gemini conversational analysis
-SARVAM_API_KEY   Sarvam AI backend integration
-MONGODB_URI      Optional MongoDB connection
-CLIENT_ORIGIN    Allowed frontend origin or origins
-Security basics
-- Never commit .env files, API keys, database credentials, or real
-  store data.
-- Keep secret keys on the backend; never put them in frontend code.
-- Keep .env.example limited to variable names and safe placeholders.
-- Rotate a key immediately if it is accidentally exposed.
-Hackathon demo flow
-For a clear end-to-end presentation:
-1. Open the dashboard and explain the shop snapshot.
-2. Open Scan & Sell and add a product using barcode scan or Quick
-   Add.
-3. Use a supported voice command to add known products to the bill.
-4. Review the bill and complete checkout with a clearly explained demo
-   payment status.
-5. Open Transactions to show the recorded sale.
-6. Return to Inventory and show the stock update.
-7. Ask the assistant which products may need restocking.
-8. Close with the technology stack and the path to supporting more
-   shops.
-Demo checklist - Reset demo data and rehearse the exact commands and
-questions. - Keep a known barcode or Quick Add as a backup. - Mobile
-camera scanning may require HTTPS; use photo input or manual entry where
-supported. - Test AI features with valid credentials and internet
-access. - Demo data proves the workflow---not real merchant adoption or
-measured business impact.
-Current scope and limitations
-SellSense AI is a prototype demonstrating a practical retail workflow.
-These boundaries matter:
-- It is not fully offline. Supported local commands and analytics
-  may work without an AI key, but external AI calls need connectivity.
-- Browser speech features vary by browser and device and may rely on
-  online services.
-- Payment status is entered in the app; live payment-provider
-  verification is not claimed.
-- Insights depend on accurate and complete sales and stock records.
-- Restocking guidance is an estimate, not a guaranteed demand
-  forecast.
-- Production use across multiple real stores would require further
-  review of data separation, access control, reliability, and
-  deployment.
-- Profit calculation is not claimed because complete purchase-cost and
-  expense records are not maintained.
-Roadmap
-Potential next steps as the project matures:
-- Multi-store separation, user accounts, and role-based access
-- Production database setup, backups, migrations, and recovery
-- Verified payment-provider integrations and payment reconciliation
-- More reliable multilingual speech support across devices
-- More detailed sales trends and configurable stock alerts
-- Automated tests, CI checks, monitoring, and deployment hardening
-- Usability testing with real shopkeepers and changes based on their
-  feedback
-This roadmap describes possible future work, not features promised by
-the current prototype.
-Why it matters
-Small retailers make important decisions every day, often while doing
-several jobs at once. Technology should meet them where they are---not
-make them learn a complicated system before it becomes useful.
+---
 
-SellSense AI explores a simple idea: let shopkeepers work in familiar
-ways, keep store records connected, and make those records easier to
-understand through conversation.
+## 🔐 Environment Configuration
 
-Start with one shop. Build for many.
-Contributing
-Contributions, issue reports, and practical feedback are welcome.
+Create a `.env` file in the server directory using the provided template.
+
+```bash
+cd server
+```
+
+Copy `.env.example` to `.env` and configure the values needed for your setup.
+
+### Common Environment Variables
+
+| Variable | Purpose |
+|---|---|
+| `GEMINI_API_KEY` | Enables supported Gemini workflows |
+| `SARVAM_API_KEY` | Enables supported Sarvam AI workflows |
+| `MONGODB_URI` | Configures MongoDB connection |
+| `CLIENT_ORIGIN` | Configures the allowed frontend origin |
+
+Use the actual `server/.env.example` file as the source of truth for variable names and defaults.
+
+**Never commit real API keys or secret values to GitHub.**
+
+---
+
+## 🧪 Demo Workflow
+
+Use this sequence to demonstrate the main application features.
+
+| Step | Action | Expected Result |
+|---|---|---|
+| 1 | Open the dashboard | Review store metrics |
+| 2 | Open Scan & Sell | Show product selection |
+| 3 | Scan a product or use Quick Add | Add a product to the bill |
+| 4 | Use a supported voice command | Demonstrate conversational interaction |
+| 5 | Review and complete checkout | Record the sale |
+| 6 | Open Transactions | Review the recorded transaction |
+| 7 | Open Inventory | Check the resulting stock quantity |
+| 8 | Ask about restocking | Demonstrate available store insights |
+
+### Demo Preparation Checklist
+
+- [ ] Reset sample data before the presentation.
+- [ ] Test the exact voice commands you intend to demonstrate.
+- [ ] Confirm the products used in the demo exist in inventory.
+- [ ] Check camera permissions if using barcode scanning.
+- [ ] Keep Quick Add or manual selection available as a fallback.
+- [ ] Test any AI provider integration before the presentation.
+
+---
+
+## 🔒 Security and Data Handling
+
+SellSense AI follows a client-server approach to application data and external provider credentials.
+
+- Keep provider API keys on the backend.
+- Store secrets in environment variables.
+- Do not commit `.env` files.
+- Validate incoming requests on the server.
+- Configure allowed frontend origins appropriately.
+- Use sample data for public demonstrations.
+- Avoid putting real customer or payment-sensitive information into a demo environment.
+
+---
+
+## ⚠️ Limitations
+
+To keep expectations clear, the current prototype has the following boundaries:
+
+| Area | Limitation |
+|---|---|
+| Payment verification | A merchant-entered status does not prove that a bank or payment provider confirmed the payment. |
+| Revenue insights | Calculations depend on recorded transaction status and available data. |
+| Profit calculations | True profit requires purchase costs and relevant expenses, which are not fully recorded by the current workflow. |
+| Restocking estimates | Estimates depend on current stock and recorded sales; they are not guarantees. |
+| AI features | AI workflows require connectivity and valid provider configuration. |
+| Speech features | Browser and device support may vary. |
+| Offline use | Supported local operations may work without AI, but the entire application is not guaranteed to work offline. |
+
+---
+
+## 🚀 Future Improvements
+
+Potential improvements for future versions:
+
+- [ ] Automated tests for billing and inventory workflows
+- [ ] Low-stock alerts and configurable reorder thresholds
+- [ ] Improved transaction audit history
+- [ ] Role-based access for shop owners and staff
+- [ ] More extensive language and accessibility testing
+- [ ] Deployment documentation
+- [ ] Production monitoring and error reporting
+
+These items are proposed enhancements, not claims about existing features.
+
+---
+
+## 🤝 Contributing
+
+Contributions and feedback are welcome.
+
 1. Fork the repository.
-2. Create a feature branch.
-3. Make a focused change.
-4. Test the affected workflow.
-5. Open a pull request with a clear description and test notes.
-Do not include secrets, personal data, or real merchant records in
-issues, screenshots, or pull requests.
-License
-No license is specified here. Add a LICENSE file before presenting the
-repository as open source, and choose a license that matches your team's
-intent.
-Acknowledgment
-Built for the Paytm Build for India AI Hackathon as an independent
-project. SellSense AI is not an official Paytm product and does not
-claim endorsement by Paytm.
-::: {align="center"}
-### SellSense AI
+2. Create a new feature branch.
+3. Make focused changes.
+4. Test the relevant workflows.
+5. Update the documentation where needed.
+6. Open a pull request with a clear summary.
 
-**A simpler way to run the shop---and understand what comes next.**
-:::
+---
+
+## 📄 License
+
+No license has been specified here.
+
+If you intend to distribute this project as open source, add an appropriate `LICENSE` file and update this section.
+
+---
+
+## 🙌 Acknowledgments
+
+Built as an independent project for the **Paytm Build for India AI Hackathon**.
+
+SellSense AI is an independent hackathon prototype and is not presented as an official Paytm product.
+
+---
+
+<div align="center">
+
+### ⚡ SellSense AI
+
+**Simplifying everyday retail with connected workflows and conversational AI.**
+
+*Built for smarter shop management.*
+
+</div>
